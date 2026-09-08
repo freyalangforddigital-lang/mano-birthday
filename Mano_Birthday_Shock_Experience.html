@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>System // M-17</title>
+<style>
+:root{--bg:#07080c;--fg:#f3f4f6;--muted:#777d89;--pink:#ff4d9a;--line:#242832}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--fg);font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+body{overflow-x:hidden}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 3px,#fff00003 4px),radial-gradient(circle at 50% 30%,#ff4d9a0d,transparent 40%);mix-blend-mode:screen}
+#app{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{width:min(680px,100%);min-height:620px;border:1px solid var(--line);border-radius:24px;background:#0b0d12;padding:clamp(24px,6vw,48px);box-shadow:0 30px 100px #000}
+.top{display:flex;justify-content:space-between;color:var(--muted);font-size:10px;letter-spacing:1.8px;margin-bottom:45px}
+.kicker{color:var(--pink);font-size:11px;letter-spacing:3px;margin-bottom:16px}
+h1{font-size:clamp(38px,10vw,76px);line-height:.95;margin:0 0 22px;letter-spacing:-3px}
+h2{font-size:clamp(25px,7vw,42px);line-height:1.05;margin:8px 0 22px}
+p{color:#b9bec8;line-height:1.7;font-size:14px}
+button{font:inherit;font-weight:700;border:1px solid #343945;border-radius:12px;background:#eef0f3;color:#090a0d;padding:15px 18px;cursor:pointer;margin-top:18px;width:100%}
+button.dark{background:#11141a;color:#e9ebef}
+.center{text-align:center}
+.small{font-size:11px;color:#676d78}
+.progress{height:8px;background:#171a21;border-radius:20px;overflow:hidden;margin:28px 0 14px;border:1px solid #252934}
+.fill{height:100%;width:0;background:var(--pink);box-shadow:0 0 18px #ff4d9a88;transition:width .18s linear}
+.percent{display:flex;justify-content:space-between;color:#858b96;font-size:11px}
+.log{margin-top:28px;text-align:left;border-left:1px solid #292e38;padding-left:16px;min-height:110px}
+.log div{margin:8px 0;color:#8e95a1;font-size:12px}
+.log .active{color:#f1f3f5}
+.glitch{animation:glitch .12s steps(2,end) 3}
+@keyframes glitch{0%{transform:translate(0)}25%{transform:translate(3px,-1px)}50%{transform:translate(-3px,1px)}75%{transform:translate(2px,1px)}100%{transform:translate(0)}}
+.pulse{animation:pulse 1.1s infinite alternate}
+@keyframes pulse{to{text-shadow:0 0 30px #ff4d9a88}}
+.scan{display:inline-block;border:1px solid #343945;border-radius:99px;padding:8px 12px;color:#9ca3af;font-size:10px;letter-spacing:2px}
+.statgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:25px 0}
+.stat{border:1px solid #252a34;border-radius:12px;padding:15px;background:#0e1117}
+.stat b{display:block;color:#f2f3f5;font-size:15px;margin-top:7px}
+.stat span{font-size:10px;color:#6f7580}
+.big{font-size:clamp(80px,23vw,160px);font-weight:900;line-height:.8;margin:25px 0;color:#f2f2f4}
+.hidden{display:none!important}
+.danger{color:#ff5b69}
+.terminal{background:#07090d;border:1px solid #20242c;border-radius:12px;padding:16px;text-align:left;font-size:12px;line-height:1.8;color:#9299a4}
+.terminal .white{color:#eef0f4}
+.note{margin-top:22px;padding:20px;border:1px solid #2a2e38;border-radius:14px;background:#0e1016}
+.note p{font-family:Georgia,serif;font-size:16px;color:#d5d7dc}
+footer{margin-top:22px;text-align:center;color:#4f5560;font-size:9px;letter-spacing:1px}
+@media(max-width:480px){.card{min-height:calc(100vh - 48px);border-radius:18px}.top{margin-bottom:32px}.statgrid{grid-template-columns:1fr}}
+
+.bday-scene{position:relative;height:310px;margin:8px 0 12px;overflow:hidden;border:1px solid #292e38;border-radius:18px;background:radial-gradient(circle at 50% 38%,#ff4d9a1c,transparent 32%),#080a0f}
+.confetti{position:absolute;inset:0;overflow:hidden}
+.confetti i{position:absolute;top:-25px;width:7px;height:16px;border-radius:2px;animation:fall 3.2s linear infinite;opacity:.9}
+.confetti i:nth-child(1){left:7%;animation-delay:.1s}.confetti i:nth-child(2){left:16%;animation-delay:1.1s}.confetti i:nth-child(3){left:27%;animation-delay:.4s}.confetti i:nth-child(4){left:38%;animation-delay:1.7s}.confetti i:nth-child(5){left:49%;animation-delay:.8s}.confetti i:nth-child(6){left:61%;animation-delay:1.4s}.confetti i:nth-child(7){left:72%;animation-delay:.2s}.confetti i:nth-child(8){left:83%;animation-delay:1.8s}.confetti i:nth-child(9){left:93%;animation-delay:.6s}
+@keyframes fall{0%{transform:translateY(-30px) rotate(0);opacity:0}10%{opacity:1}100%{transform:translateY(350px) rotate(620deg);opacity:.15}}
+.cake{position:absolute;left:50%;bottom:35px;transform:translateX(-50%);width:150px;height:105px}
+.cake .top{position:absolute;left:5px;right:5px;top:0;height:28px;background:#f0b6c9;border-radius:50%;border:0;margin:0}
+.cake .body{position:absolute;left:8px;right:8px;top:13px;height:70px;background:#ead8bd;border-radius:8px;box-shadow:inset 0 -18px #d6a9a0}
+.cake .icing{position:absolute;left:8px;right:8px;top:14px;height:25px;background:#fff0f4;border-radius:50%}
+.candle{position:absolute;left:50%;top:-45px;width:10px;height:43px;background:#f2e7d4;transform:translateX(-50%);border-radius:4px}
+.flame{position:absolute;left:50%;top:-17px;width:15px;height:22px;transform:translateX(-50%);background:#ffb347;border-radius:50% 50% 45% 45%;box-shadow:0 0 22px #ffb347aa;animation:flicker .45s infinite alternate}
+@keyframes flicker{to{transform:translateX(-50%) scale(.8) rotate(4deg)}}
+.b17{position:absolute;top:28px;left:50%;transform:translateX(-50%);font:900 92px Arial;color:#f4f4f6;text-shadow:0 0 28px #ff4d9a66;animation:pop .9s cubic-bezier(.2,1.5,.4,1)}
+@keyframes pop{from{transform:translateX(-50%) scale(.2);opacity:0}to{transform:translateX(-50%) scale(1);opacity:1}}
+.bmsg{position:absolute;left:0;right:0;bottom:8px;text-align:center;font:700 11px Arial;letter-spacing:3px;color:#ff79ae}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const app=document.getElementById('app');
+
+function shell(content){
+ app.innerHTML=`<section class="card">${content}</section>`;
+}
+
+function start(){
+shell(`
+<div class="top"><span>SYSTEM // M-17</span><span>UNKNOWN DEVICE</span></div>
+<div class="center">
+<div class="kicker">DO NOT PANIC</div>
+<h1>Something<br>is wrong.</h1>
+<p>We detected unusual activity connected to this device.</p>
+<p class="small">A system check is required.</p>
+<button onclick="boot()">RUN SYSTEM CHECK</button>
+<footer>connection secure // probably</footer>
+</div>`);
+}
+
+function boot(){
+shell(`
+<div class="top"><span>SYSTEM CHECK</span><span>LIVE</span></div>
+<div class="kicker">PLEASE WAIT</div>
+<h2 id="stage">Initializing...</h2>
+<div class="progress"><div class="fill" id="fill"></div></div>
+<div class="percent"><span id="status">starting</span><span id="pct">0%</span></div>
+<div class="log" id="log"></div>`);
+const fill=document.getElementById('fill'), pct=document.getElementById('pct'), stage=document.getElementById('stage'), status=document.getElementById('status'), log=document.getElementById('log');
+const steps=[
+[8,"Waking up system..."],
+[18,"Checking local files..."],
+[29,"Searching user records..."],
+[41,"Searching birthday records..."],
+[55,"Scanning detected user..."],
+[66,"User match found..."],
+[73,"Wait. Why is this happening?"],
+[84,"Updating age: 16 → 17"],
+[94,"Preparing something suspicious..."],
+[100,"COMPLETE"]
+];
+let i=0;
+function go(){
+ const [target,text]=steps[i];
+ stage.textContent=text; status.textContent=text.toLowerCase();
+ const start= i?steps[i-1][0]:0;
+ let v=start;
+ const timer=setInterval(()=>{
+   v+=1; fill.style.width=v+"%"; pct.textContent=v+"%";
+   if(v>=target){clearInterval(timer); addLog(text); i++;
+     if(i<steps.length)setTimeout(go, target===73?850:320);
+     else setTimeout(reveal,900);
+   }
+ }, target===73?90:35);
+}
+function addLog(t){log.insertAdjacentHTML('beforeend',`<div>› ${t}</div>`); if(log.children.length>5)log.removeChild(log.children[0]);}
+go();
+}
+
+function reveal(){
+shell(`
+<div class="top"><span>ALERT // USER FOUND</span><span class="danger">UNAUTHORIZED</span></div>
+<div class="center glitch">
+<div class="kicker">IDENTITY MATCH: 100%</div>
+<h1 class="pulse">MALIHA<br>HAS BEEN<br>DETECTED.</h1>
+<p>Okay. This is getting weird.</p>
+<button onclick="birthday()">CONTINUE</button>
+</div>`);
+}
+
+function birthday(){
+shell(`
+<div class="top"><span>PROFILE UPDATE</span><span>17.0</span></div>
+<div class="center">
+<div class="bday-scene">
+  <div class="confetti">
+    <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+  </div>
+  <div class="b17">17</div>
+  <div class="cake">
+    <div class="candle"><div class="flame"></div></div>
+    <div class="body"></div><div class="icing"></div><div class="top"></div>
+  </div>
+  <div class="bmsg">BIRTHDAY MODE ACTIVATED</div>
+</div>
+<h2>OH. IT'S ACTUALLY YOUR BIRTHDAY.</h2>
+<p>You really thought this was a system error?</p>
+<p><b>Happy Birthday, Mano.</b></p>
+<button onclick="analysis()">SHOW USER ANALYSIS</button>
+</div>`);
+}
+
+function analysis(){
+shell(`
+<div class="top"><span>MANO // ANALYSIS</span><span>RESULTS</span></div>
+<div class="kicker">17 YEARS OF DATA</div>
+<h2>Results are...</h2>
+<div class="statgrid">
+<div class="stat"><span>CHAOS LEVEL</span><b>HIGH</b></div>
+<div class="stat"><span>DRAMA LEVEL</span><b>CLASSIFIED</b></div>
+<div class="stat"><span>COMMON SENSE</span><b>LOADING...</b></div>
+<div class="stat"><span>COUSIN COMPATIBILITY</span><b>100%</b></div>
+</div>
+<div class="terminal"><span class="white">FINAL RESULT:</span><br>MANO IS MANO.<br>Further explanation unavailable.</div>
+<button onclick="secret()">OPEN SOMETHING ELSE</button>
+</div>`);
+}
+
+function secret(){
+shell(`
+<div class="top"><span>IMPORTANT DISCOVERY</span><span>UH OH</span></div>
+<div class="center">
+<div class="kicker">SYSTEM HAS FOUND SOMETHING</div>
+<h2>WAIT...</h2>
+<p>We found one more thing about Mano.</p>
+<div class="terminal">
+<span class="white">SCANNING...</span><br>
+Favourite food: classified<br>
+Patience level: questionable<br>
+Ability to behave normally: <span class="danger">NOT FOUND</span><br>
+Cousin dependency: <span class="white">100%</span>
+</div>
+<button onclick="funny()">SHOW THE EVIDENCE</button>
+</div>`);
+}
+
+function file(){
+shell(`
+<div class="top"><span>EVIDENCE // 01</span><span>VERY SERIOUS</span></div>
+<div class="center">
+<div class="kicker">THE EVIDENCE</div>
+<h2>We have proof.</h2>
+<div class="terminal">
+<span class="white">CASE:</span> Why is Mano like this?<br><br>
+<span class="white">INVESTIGATION:</span><br>
+• She is 17.<br>
+• She still makes questionable decisions.<br>
+• She somehow gets away with it.<br>
+• Her cousin continues to support this behaviour.<br><br>
+<span class="white">CONCLUSION:</span><br>
+Nobody knows what is going on.
+</div>
+<p><b>Scientists have decided to stop investigating.</b></p>
+<button onclick="finalMsg()">FINE. MOVE ON.</button>
+</div>`);
+}
+
+function funny(){
+shell(`
+<div class="top"><span>BREAKING NEWS</span><span>URGENT</span></div>
+<div class="center glitch">
+<div class="kicker">LIVE UPDATE</div>
+<h2>MANO HAS TURNED 17.</h2>
+<p>Experts have confirmed that absolutely nothing has changed.</p>
+<div class="note"><p><b>Before:</b> chaotic<br><b>After:</b> still chaotic</p><p>Scientists are calling this a “successful birthday upgrade.”</p></div>
+<button onclick="finalMsg()">OKAY I'M DONE</button>
+</div>`);
+}
+
+function finalMsg(){
+shell(`
+<div class="top"><span>FINAL MESSAGE</span><span>PRIVATE</span></div>
+<div class="kicker">OKAY, SERIOUSLY.</div>
+<div class="note">
+<p><b>Mano,</b></p>
+<p>Birthday wishes toh tumhein bohat milengi. Lekin mujhe normal sa “Happy Birthday, have a great day” nahi bhejna tha.</p>
+<p>Bas itna kehna hai ke I'm genuinely really happy ke tum meri cousin ho — aur un logon mein se ho jin ke saath main bilkul stupid ho sakti hoon.</p>
+<p>17 ki ho gayi ho...</p>
+<p><b>ab mature banne ki acting mat karna.</b></p>
+<p>Happy 17th, Mano. 🤍</p>
+</div>
+<button onclick="bonus()">THAT'S IT. I'M DONE.</button>
+`);
+}
+
+function bonus(){
+shell(`
+<div class="center">
+<div class="kicker">...</div>
+<h2>Wait.</h2>
+<p>You actually believed that was the end?</p>
+<button onclick="voice()">BONUS LEVEL</button>
+</div>`);
+}
+
+function voice(){
+shell(`
+<div class="center">
+<div class="kicker">BONUS LEVEL UNLOCKED</div>
+<h2>One last thing.</h2>
+<p>Now call your cousin.</p>
+<div class="note"><p><b>Seriously.</b><br>Go call her.</p></div>
+<button onclick="start()">RESTART THE CHAOS</button>
+<footer>CASE CLOSED // HAPPY 17TH MANO</footer>
+</div>`);
+}
+start();
+</script>
+</body>
+</html>
